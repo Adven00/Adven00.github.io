@@ -24,7 +24,7 @@
 <meta property="og:description" content="首先，给出一般的「渲染方程」 \[ L_o(x, \omega_o)&#x3D;L_e(x, \omega_o)+\int_{\Omega}f_r(x, \omega_o, \omega_i)L_i(x, \omega_i)\cos \theta d\omega_i \] 这个方程显然带有递归性质：从 \(x\) 点射出的光线 \(L_o\) 又会成为射入下一个交点 \(x^{&#39;}\) 的入">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-01-14T13:15:42.000Z">
-<meta property="article:modified_time" content="2022-01-16T10:58:20.738Z">
+<meta property="article:modified_time" content="2022-01-17T07:59:42.383Z">
 <meta property="article:author" content="Adven">
 <meta property="article:tag" content="计算机图形学">
 <meta name="twitter:card" content="summary_large_image">
@@ -230,7 +230,7 @@
 <p><span class="math display">\[
 L_o(x, \omega_o)=L_e(x, \omega_o)+\int_{\Omega}f_r(x, \omega_o, \omega_i)L_i(x, \omega_i)\cos \theta d\omega_i
 \]</span></p>
-<p>这个方程显然带有递归性质：从 <span class="math inline">\(x\)</span> 点射出的光线 <span class="math inline">\(L_o\)</span> 又会成为射入下一个交点 <span class="math inline">\(x^{&#39;}\)</span> 的入射光线，递归过程可以写成</p>
+<p>这个方程显然带有递归性质：从 <span class="math inline">\(x\)</span> 点射出的光线 <span class="math inline">\(L_o\)</span> 又会成为射入下一个交点 <span class="math inline">\(x^{&#39;}\)</span> 的入射光线</p>
 <p><span class="math display">\[
 L_o(x, \omega_o)=L_i(x^{&#39;},-\omega_o)
 \]</span></p>
@@ -252,7 +252,7 @@ L_i^0&amp;=L_e^0+k_0L_e^1+k_0k_1L_e^2+k_0k_1k_2L_e^3+\cdots
 \end{aligned}
 \]</span></p>
 <p>上式就是我们在「路径追踪」中实际使用的计算公式，这是一个单调收敛的无穷项级数，一般还要用「俄罗斯轮盘赌」方法控制项数。做这样的的变换有利于我们在编程时将渲染过程写成迭代而非递归。</p>
-<p>此外，观察这个公式，可以得到一些关于渲染方程的更深理解：所有进入相机的光线源头都是 <span class="math inline">\(L_e\)</span> ， <span class="math inline">\(L_e^0\)</span> 是直接光照， <span class="math inline">\(K_1L_e^1\)</span> 是经过一次折射或反射的间接光照，一般光栅化管线处理到这里为止。利用路径追踪，我们可以继续计算这个级数的更多项以得到「全局光照」。</p>
+<p>此外，观察这个公式，可以对渲染方程有更深的理解：所有进入相机的光线源头都是 <span class="math inline">\(L_e\)</span> ， <span class="math inline">\(L_e^0\)</span> 是直接光照， <span class="math inline">\(K_1L_e^1\)</span> 是经过一次折射或反射的间接光照，一般光栅化管线处理到这里为止。利用路径追踪，我们可以继续计算这个级数的更多项以得到「全局光照」。</p>
 <p>如果更深一步，把渲染方程抽象成线性算子形式</p>
 <p><span class="math display">\[
 \begin{aligned}
