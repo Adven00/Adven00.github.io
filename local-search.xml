@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>渲染方程的级数形式</title>
+    <link href="/2022/01/14/%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B%E7%9A%84%E7%BA%A7%E6%95%B0%E5%BD%A2%E5%BC%8F/"/>
+    <url>/2022/01/14/%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B%E7%9A%84%E7%BA%A7%E6%95%B0%E5%BD%A2%E5%BC%8F/</url>
+    
+    <content type="html"><![CDATA[<p>首先，给出一般的「渲染方程」</p><p>$$<br>L_o(x, \omega_o)&#x3D;L_e(x, \omega_o)+\int_{\Omega}f_r(x, \omega_o, \omega_i)L_i(x, \omega_i)\cos \theta d\omega_i<br>$$</p><p>这个方程显然带有递归性质：从 $x$ 点射出的光线 $L_o$ 又会成为射入下一个交点 $x^{‘}$ 的入射光线</p><p>$$<br>L_o(x, \omega_o)&#x3D;L_i(x^{‘},-\omega_o)<br>$$</p><p>在对一条光路进行「路径追踪」时，要递归多次以计算出最终进入相机的 $L_o$ ，将 $L_o$ 其记作 $L_i^{0}$，上标表示递归的层级。</p><p>再看方程的积分项。路径追踪中，利用「蒙特卡洛积分」将积分项化成单纯的乘法运算，表示如下</p><p>$$<br>\int_{\Omega}f_rL_i\cos \theta d\omega_i\approx f_rL_i\cos \theta&#x2F;p(\omega_i)&#x3D;kL_i<br>$$</p><p>综上，把渲染方程写成</p><p>$$<br>L_i^n&#x3D;L_e^n+k_nL_i^{n+1}<br>$$</p><p>由这个递推关系，展开最后的结果 $L_i^0$，记 $K_n&#x3D;\prod \limits_{i&#x3D;0}^{n-1}k_i$</p><p>$$<br>\begin{aligned}<br>L_i^0&amp;&#x3D;L_e^0+k_0L_e^1+k_0k_1L_e^2+k_0k_1k_2L_e^3+\cdots<br>\&amp;&#x3D;L_e^0+K_1L_e^1+K_2L_e^2+K_3L_e^3+\cdots<br>\&amp;&#x3D;\sum\limits_{i&#x3D;0}^{+\infty}K_iL_e^i<br>\end{aligned}<br>$$</p><p>上式就是我们在「路径追踪」中实际使用的计算公式，这是一个单调收敛的无穷项级数，一般还要用「俄罗斯轮盘赌」方法控制项数。做这样的的变换有利于我们在编程时将渲染过程写成迭代而非递归。</p><p>此外，观察这个公式，可以对渲染方程有更深的理解：所有进入相机的光线源头都是 $L_e$ ， $L_e^0$ 是直接光照， $K_1L_e^1$ 是经过一次折射或反射的间接光照，一般光栅化管线处理到这里为止。利用路径追踪，我们可以继续计算这个级数的更多项以得到「全局光照」。</p><p>如果更深一步，把渲染方程抽象成线性算子形式</p><p>$$<br>\begin{aligned}<br>L&#x3D;E+KL<br>\end{aligned}<br>$$</p><p>可以展开为</p><p>$$<br>L&#x3D;(1-K)^{-1}E&#x3D;E(1+K+K^2+\cdots)<br>$$</p><p>思路上和我一致，只不过我是在更具体的情形下推导的，没有这么抽象，看看就好。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>计算机图形学</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>图形学渲染方向学习路线整理</title>
+    <link href="/2021/12/14/%E5%9B%BE%E5%BD%A2%E5%AD%A6%E6%B8%B2%E6%9F%93%E6%96%B9%E5%90%91%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E6%95%B4%E7%90%86/"/>
+    <url>/2021/12/14/%E5%9B%BE%E5%BD%A2%E5%AD%A6%E6%B8%B2%E6%9F%93%E6%96%B9%E5%90%91%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E6%95%B4%E7%90%86/</url>
+    
+    <content type="html"><![CDATA[<p>个人经验总结，仅供参考。</p><h2 id="图形学基础"><a href="#图形学基础" class="headerlink" title="图形学基础"></a>图形学基础</h2><ul><li><p><a href="https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html">GAMES101: 现代计算机图形学入门 -UCSB 闫令琪</a></p><blockquote><p>感谢「孙小磊」的<a href="https://www.zhihu.com/column/c_1249465121615204352">笔记</a></p></blockquote></li><li><p><a href="http://staff.ustc.edu.cn/~lgliu/Resources/CG/What_is_CG.htm">什么是计算机图形学? -中国科学技术大学 刘利刚</a></p></li><li><p><a href="http://staff.ustc.edu.cn/~lgliu/Courses/ComputerGraphics_2020_spring-summer/default.htm">计算机图形学 -中国科学技术大学 刘利刚</a></p></li><li><p><a href="https://book.douban.com/subject/26868819/">Fundamentals of Computer Graphics</a></p></li></ul><h2 id="实践：软光栅"><a href="#实践：软光栅" class="headerlink" title="实践：软光栅"></a>实践：软光栅</h2><ul><li><p><a href="https://www.zhihu.com/question/24786878/answer/1483055155">如何开始用 C++ 写一个光栅化渲染器？</a></p></li><li><p><a href="https://github.com/ssloy/tinyrenderer/wiki">Tiny renderer or how OpenGL works: software rendering in 500 lines of code</a></p></li></ul><blockquote><p>知乎该问题下有很多优秀的开源实现和设计思路供参考</p></blockquote><h2 id="实践：光线追踪"><a href="#实践：光线追踪" class="headerlink" title="实践：光线追踪"></a>实践：光线追踪</h2><ul><li><p><a href="https://raytracing.github.io/">Ray Tracing in One Weekend Series</a></p><blockquote><p>感谢「陈泽日天」的<a href="https://zhuanlan.zhihu.com/p/128582904">翻译</a></p></blockquote></li><li><p><a href="https://wjakob.github.io/nori/#">Nori: an educational ray tracer</a></p><blockquote><p>感谢「ksg fk」的<a href="https://www.zhihu.com/column/c_1407025850030698496">笔记</a></p></blockquote></li></ul><h2 id="渲染进阶"><a href="#渲染进阶" class="headerlink" title="渲染进阶"></a>渲染进阶</h2><ul><li><p><a href="https://www.pbr-book.org/3ed-2018/contents">Physically Based Rendering: From Theory To Implementation</a></p><blockquote><p>这里有一些<a href="https://dezeming.top/?page_id=50">笔记</a>和<a href="https://www.zhihu.com/question/309420057/answer/652338038">阅读建议</a>。感谢毛星云的<a href="https://raw.githubusercontent.com/QianMo/PBR-White-Paper/master/media/PBR-White-Paper-Knowledge-Architecture-1.0.png">架构图</a></p></blockquote></li><li><p><a href="https://www.realtimerendering.com/">Real-Time Rendering</a></p><blockquote><p>感谢毛星云的<a href="https://zhuanlan.zhihu.com/p/26259772">整理</a>与翻译，这里是他的<a href="https://www.zhihu.com/column/game-programming">专栏</a></p></blockquote><blockquote><p>斯人已逝，薪火长存</p></blockquote></li><li><p><a href="https://space.bilibili.com/1598639097/video">计算机图形学前沿暑期课程 -中国科学技术大学</a></p></li><li><p><a href="https://sites.cs.ucsb.edu/~lingqi/teaching/games202.html">GAMES202: 高质量实时渲染 -UCSB 闫令琪</a></p></li><li><p><a href="https://www.realtimerendering.com/raytracinggems/">Ray Tracing Gems Series</a></p><blockquote><p>感谢「Vinjn张静」组织的<a href="https://item.jd.com/10037028085354.html">翻译</a></p></blockquote></li><li><p><a href="https://space.bilibili.com/512313464">GAMES Webinar 在线报告</a></p><blockquote><p>渲染专题和绘制专题有很多值得一看的报告</p></blockquote></li><li><p><a href="https://kesen.realtimerendering.com/">SIGGRAPH resource</a></p></li></ul><h2 id="绘制流水线-x2F-API"><a href="#绘制流水线-x2F-API" class="headerlink" title="绘制流水线&#x2F;API"></a>绘制流水线&#x2F;API</h2><ul><li><p><a href="https://learnopengl-cn.github.io/">Learn OpenGL CN</a></p></li><li><p><a href="https://vulkan-tutorial.com/">Vulkan Tutorial</a></p><blockquote><p>感谢「fangcun」的<a href="https://github.com/fangcun010/VulkanTutorialCN">翻译</a></p></blockquote></li><li><p><a href="https://zju-rendering.github.io/games106/">GAMES106: 现代图形绘制流水线原理与实践</a></p></li><li><p><a href="https://space.bilibili.com/2055684362/channel/collectiondetail?sid=318149">上帝视角看GPU -龚敏敏</a></p></li></ul><h2 id="编程"><a href="#编程" class="headerlink" title="编程"></a>编程</h2><ul><li><p><a href="https://github.com/ttroy50/cmake-examples">CMake Examples</a></p></li><li><p><a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a></p></li><li><p><a href="https://changkun.de/modern-cpp/">现代 C++ 教程：高速上手 C++ 11&#x2F;14&#x2F;17&#x2F;20</a></p></li><li><p><a href="https://github.com/parallel101/course">parallel101: 高性能并行编程与优化 -彭于斌</a></p></li></ul><h2 id="游戏开发相关"><a href="#游戏开发相关" class="headerlink" title="游戏开发相关"></a>游戏开发相关</h2><ul><li><p><a href="https://github.com/miloyip/game-programmer/">游戏程序员的学习之路 -叶劲峰</a></p></li><li><p><a href="https://space.bilibili.com/7398208/video">技术美术百人计划</a></p></li><li><p><a href="https://games104.boomingtech.com/">GAMES104: 现代游戏引擎 -不鸣科技 王希</a></p></li><li><p><a href="https://catlikecoding.com/unity/tutorials/">C# and Shader Tutorials for the Unity Engine</a></p></li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>计算机图形学</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
