@@ -24,7 +24,7 @@
 <meta property="og:description" content="Next Event Estimation (NEE) 是一个常被提及的概念，却鲜有中文资料介绍。受这篇文章启发，我姑且将 NEE 定义为「提前计算直接光照」。这一概念常常和 MIS 等混淆，特此整理一下。 算法 首先还是列出渲染方程 \[ L(x\to\omega_i) &#x3D; L_e(x\to\omega_i) + \int_\Omega L(\omega\to x)f_s(\om">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-26T16:15:25.000Z">
-<meta property="article:modified_time" content="2023-11-26T20:01:54.822Z">
+<meta property="article:modified_time" content="2023-11-26T20:48:37.110Z">
 <meta property="article:author" content="Adven">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -307,9 +307,11 @@ Event」的理解。</p>
 <span class="math inline">\(L_e\)</span>
 换成一个可计算的积分。第二项直接光积分更常见的形式是</p>
 <p><span class="math display">\[
+\begin{aligned}
 \int_{A}L_e(p\to x)f_s(p\to x \to \omega_i)G(x,p)dA\\
 G(x,p)=V(x\leftrightarrow p)\frac{\cos\theta_1\cos\theta_2}{\lVert
 p-x\rVert^2}
+\end{aligned}
 \]</span></p>
 <p>采样域转化到面上计算。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">function <span class="hljs-title">Ls</span><span class="hljs-params">(dir)</span>:</span><br><span class="hljs-function">    throughoutput =</span> <span class="hljs-number">1</span><br>    radiance = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">while</span>(before max depth)<br>        x = scene.<span class="hljs-built_in">Intersect</span>(dir)<br><br>        pdf_direct, bsdf_direct, emittance, geo_term = <span class="hljs-built_in">SampleLight</span>()<br>        direct_radiance = bsdf_direct * emittance * geo_term / pdf_direct<br>        radiance += direct_radiance * throughoutput<br><br>        dir, pdf, cos, bsdf = <span class="hljs-built_in">SmapleNextDirection</span>()<br>        throughoutput *= bsdf * cos / pdf<br><br>    <span class="hljs-keyword">return</span> radiance<br></code></pre></td></tr></table></figure>
