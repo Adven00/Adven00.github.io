@@ -16,15 +16,15 @@
   <meta name="author" content="Adven">
   <meta name="keywords" content="">
   
-    <meta name="description" content="个人经验总结，仅供参考。 图形学基础  GAMES101: 现代计算机图形学入门 -UCSB 闫令琪  感谢「孙小磊」的笔记  什么是计算机图形学? -中国科学技术大学 刘利刚 计算机图形学 -中国科学技术大学 刘利刚 Fundamentals of Computer Graphics  实践：软光栅  如何开始用 C++ 写一个光栅化渲染器？ Tiny r">
+    <meta name="description" content="Next Event Estimation (NEE) 是一个常被提及的概念，却鲜有中文资料介绍。受这篇文章启发，我姑且将 NEE 定义为「提前计算直接光照」。这一概念常常和 MIS 等混淆，特此整理一下。 算法 首先还是列出渲染方程 \[ L(x\to\omega_i) &#x3D; L_e(x\to\omega_i) + \int_\Omega L(\omega\to x)f_s(\om">
 <meta property="og:type" content="article">
-<meta property="og:title" content="图形学渲染方向学习路线整理">
-<meta property="og:url" content="https://adven00.github.io/2021/12/14/%E5%9B%BE%E5%BD%A2%E5%AD%A6%E6%B8%B2%E6%9F%93%E6%96%B9%E5%90%91%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E6%95%B4%E7%90%86/index.html">
+<meta property="og:title" content="Next Event Estimation">
+<meta property="og:url" content="https://adven00.github.io/2023/11/27/Next-Event-Estimation/index.html">
 <meta property="og:site_name" content="Adven&#39;s blog">
-<meta property="og:description" content="个人经验总结，仅供参考。 图形学基础  GAMES101: 现代计算机图形学入门 -UCSB 闫令琪  感谢「孙小磊」的笔记  什么是计算机图形学? -中国科学技术大学 刘利刚 计算机图形学 -中国科学技术大学 刘利刚 Fundamentals of Computer Graphics  实践：软光栅  如何开始用 C++ 写一个光栅化渲染器？ Tiny r">
+<meta property="og:description" content="Next Event Estimation (NEE) 是一个常被提及的概念，却鲜有中文资料介绍。受这篇文章启发，我姑且将 NEE 定义为「提前计算直接光照」。这一概念常常和 MIS 等混淆，特此整理一下。 算法 首先还是列出渲染方程 \[ L(x\to\omega_i) &#x3D; L_e(x\to\omega_i) + \int_\Omega L(\omega\to x)f_s(\om">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-12-14T12:22:42.000Z">
-<meta property="article:modified_time" content="2023-04-21T08:10:37.504Z">
+<meta property="article:published_time" content="2023-11-26T16:15:25.000Z">
+<meta property="article:modified_time" content="2023-11-26T20:01:54.822Z">
 <meta property="article:author" content="Adven">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -32,7 +32,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>图形学渲染方向学习路线整理 - Adven&#39;s blog</title>
+  <title>Next Event Estimation - Adven&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="图形学渲染方向学习路线整理"></span>
+            <span id="subtitle" data-typed-text="Next Event Estimation"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2021-12-14 20:22" pubdate>
-          2021年12月14日 晚上
+        <time datetime="2023-11-27 00:15" pubdate>
+          2023年11月27日 凌晨
         </time>
       </span>
     
@@ -258,135 +258,96 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">图形学渲染方向学习路线整理</h1>
+            <h1 style="display: none">Next Event Estimation</h1>
             
             
               <div class="markdown-body">
                 
-                <p>个人经验总结，仅供参考。</p>
-<h2 id="图形学基础">图形学基础</h2>
-<ul>
-<li><p><a
-target="_blank" rel="noopener" href="https://sites.cs.ucsb.edu/~lingqi/teaching/games101.html">GAMES101:
-现代计算机图形学入门 -UCSB 闫令琪</a></p>
-<blockquote>
-<p>感谢「孙小磊」的<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1249465121615204352">笔记</a></p>
-</blockquote></li>
-<li><p><a
-target="_blank" rel="noopener" href="http://staff.ustc.edu.cn/~lgliu/Resources/CG/What_is_CG.htm">什么是计算机图形学?
--中国科学技术大学 刘利刚</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="http://staff.ustc.edu.cn/~lgliu/Courses/ComputerGraphics_2020_spring-summer/default.htm">计算机图形学
--中国科学技术大学 刘利刚</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://book.douban.com/subject/26868819/">Fundamentals
-of Computer Graphics</a></p></li>
-</ul>
-<h2 id="实践软光栅">实践：软光栅</h2>
-<ul>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.zhihu.com/question/24786878/answer/1483055155">如何开始用
-C++ 写一个光栅化渲染器？</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/ssloy/tinyrenderer/wiki">Tiny
-renderer or how OpenGL works: software rendering in 500 lines of
-code</a></p></li>
-</ul>
-<blockquote>
-<p>知乎该问题下有很多优秀的开源实现和设计思路供参考</p>
-</blockquote>
-<h2 id="实践光线追踪">实践：光线追踪</h2>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://raytracing.github.io/">Ray Tracing in One
-Weekend Series</a></p>
-<blockquote>
-<p>感谢「陈泽日天」的<a
-target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/128582904">翻译</a></p>
-</blockquote></li>
-<li><p><a target="_blank" rel="noopener" href="https://wjakob.github.io/nori/#">Nori: an educational
-ray tracer</a></p>
-<blockquote>
-<p>感谢「ksg fk」的<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/column/c_1407025850030698496">笔记</a></p>
-</blockquote></li>
-</ul>
-<h2 id="渲染进阶">渲染进阶</h2>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/contents">Physically
-Based Rendering: From Theory To Implementation</a></p>
-<blockquote>
-<p>这里有一些<a target="_blank" rel="noopener" href="https://dezeming.top/?page_id=50">笔记</a>和<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/question/309420057/answer/652338038">阅读建议</a>。感谢毛星云的<a
-target="_blank" rel="noopener" href="https://raw.githubusercontent.com/QianMo/PBR-White-Paper/master/media/PBR-White-Paper-Knowledge-Architecture-1.0.png">架构图</a></p>
-</blockquote></li>
-<li><p><a target="_blank" rel="noopener" href="https://www.realtimerendering.com/">Real-Time
-Rendering</a></p>
-<blockquote>
-<p>感谢毛星云的<a
-target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26259772">整理</a>与翻译，这里是他的<a
-target="_blank" rel="noopener" href="https://www.zhihu.com/column/game-programming">专栏</a></p>
-</blockquote>
-<blockquote>
-<p>斯人已逝，薪火长存</p>
-</blockquote></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://space.bilibili.com/1598639097/video">计算机图形学前沿暑期课程
--中国科学技术大学</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://sites.cs.ucsb.edu/~lingqi/teaching/games202.html">GAMES202:
-高质量实时渲染 -UCSB 闫令琪</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://www.realtimerendering.com/raytracinggems/">Ray
-Tracing Gems Series</a></p>
-<blockquote>
-<p>感谢「Vinjn张静」组织的<a
-target="_blank" rel="noopener" href="https://item.jd.com/10037028085354.html">翻译</a></p>
-</blockquote></li>
-<li><p><a target="_blank" rel="noopener" href="https://space.bilibili.com/512313464">GAMES Webinar
-在线报告</a></p>
-<blockquote>
-<p>渲染专题和绘制专题有很多值得一看的报告</p>
-</blockquote></li>
-<li><p><a target="_blank" rel="noopener" href="https://kesen.realtimerendering.com/">SIGGRAPH
-resource</a></p></li>
-</ul>
-<h2 id="绘制流水线api">绘制流水线/API</h2>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/">Learn OpenGL
-CN</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://vulkan-tutorial.com/">Vulkan Tutorial</a></p>
-<blockquote>
-<p>感谢「fangcun」的<a
-target="_blank" rel="noopener" href="https://github.com/fangcun010/VulkanTutorialCN">翻译</a></p>
-</blockquote></li>
-<li><p><a target="_blank" rel="noopener" href="https://zju-rendering.github.io/games106/">GAMES106:
-现代图形绘制流水线原理与实践</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://space.bilibili.com/2055684362/channel/collectiondetail?sid=318149">上帝视角看GPU
--龚敏敏</a></p></li>
-</ul>
-<h2 id="编程">编程</h2>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/ttroy50/cmake-examples">CMake
-Examples</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://google.github.io/styleguide/cppguide.html">Google C++
-Style Guide</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://changkun.de/modern-cpp/">现代 C++ 教程：高速上手
-C++ 11/14/17/20</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://github.com/parallel101/course">parallel101:
-高性能并行编程与优化 -彭于斌</a></p></li>
-</ul>
-<h2 id="游戏开发相关">游戏开发相关</h2>
-<ul>
-<li><p><a
-target="_blank" rel="noopener" href="https://github.com/miloyip/game-programmer/">游戏程序员的学习之路
--叶劲峰</a></p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://space.bilibili.com/7398208/video">技术美术百人计划</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://games104.boomingtech.com/">GAMES104:
-现代游戏引擎 -不鸣科技 王希</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://catlikecoding.com/unity/tutorials/">C# and
-Shader Tutorials for the Unity Engine</a></p></li>
-</ul>
+                <p>Next Event Estimation (NEE)
+是一个常被提及的概念，却鲜有中文资料介绍。受<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/666466161">这篇文章</a>启发，我姑且将
+NEE 定义为「提前计算直接光照」。这一概念常常和 MIS
+等混淆，特此整理一下。</p>
+<h2 id="算法">算法</h2>
+<p>首先还是列出渲染方程</p>
+<p><span class="math display">\[
+L(x\to\omega_i) = L_e(x\to\omega_i) + \int_\Omega L(\omega\to
+x)f_s(\omega\to x \to \omega_i)\cos\theta d \omega
+\]</span></p>
+<p>渲染方程带有递归性质，实质上是直接光照 <span
+class="math inline">\(L_e\)</span> 的累加</p>
+<p><span class="math display">\[
+L(x^0\to\omega^0)=\sum_i K_i L_e(x^i\to\omega^i)
+\]</span></p>
+<p>其中上标代表一条追踪路径 <span
+class="math inline">\(x^0\to\omega^0\to x^1\to
+\omega^1\to\cdots\)</span>
+，到这里其实就可以写出一个简单的路径追踪函数了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">function <span class="hljs-title">Li</span><span class="hljs-params">(dir)</span>:</span><br><span class="hljs-function">    throughoutput =</span> <span class="hljs-number">1</span><br>    radiance = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">while</span>(before max depth)<br>        x = scene.<span class="hljs-built_in">Intersect</span>(dir)<br><br>        <span class="hljs-keyword">if</span> (x is on a light)<br>            radiance += <span class="hljs-built_in">Le</span>(x, dir) * throughoutput<br><br>        dir, pdf, cos, bsdf = <span class="hljs-built_in">SmapleNextDirection</span>()<br>        throughoutput *= bsdf * cos / pdf<br><br>    <span class="hljs-keyword">return</span> radiance<br></code></pre></td></tr></table></figure>
+<p>这里采样下一条路径的方法是任意的，可以根据材质等等。思路很简洁，但存在一个问题：当且仅当采样的路径击中光源表面时，才会对该光线的结果产生贡献。在光源较少的场景里这并不是一件容易的事！当然只要光线足够多，迭代足够深，总会得到收敛的结果，但也会导致较大的方差。</p>
+<p>换句话说，造成该现象的原因是「计算光源贡献的时机太迟了」，非要到直接击中时才计算。事实上，我们可以将交点受到的光照拆成两部分：光源直接照射和其他表面的散射</p>
+<p><span class="math display">\[
+L(\omega\to x)=L_e(\omega\to x) + L_s(\omega\to x)
+\]</span></p>
+<p>把渲染方程改写成</p>
+<p><span class="math display">\[
+\begin{aligned}
+L_s(x\to\omega_i) =&amp;\int_\Omega L_s(\omega\to x)f_s(\omega\to x \to
+\omega_i)\cos\theta d \omega \qquad\text{(indirect light)}\\
++&amp;\int_{\Omega_e}L_e(\omega\to x)f_s(\omega\to x \to
+\omega_i)\cos\theta d \omega\qquad\text{ (direct light)}    
+\end{aligned}
+\]</span></p>
+<p>这样改写以后，和原来的渲染方程形式上几乎一致，区别在于 <span
+class="math inline">\(L_e\)</span> 项变成了一个关于 <span
+class="math inline">\(L_e\)</span>
+的积分。这样，每次击中表面时，都会计算「受到的直接光照的积分」，即使是小光源也总会产生贡献。从「表面发出的光」到「受到的直接光照积分」，将后续直接光的计算提前，这就是我对「Next
+Event」的理解。</p>
+<p>计算上式是很简单的，和前述原始渲染方程的计算方法完全相同，只不过把
+<span class="math inline">\(L_e\)</span>
+换成一个可计算的积分。第二项直接光积分更常见的形式是</p>
+<p><span class="math display">\[
+\int_{A}L_e(p\to x)f_s(p\to x \to \omega_i)G(x,p)dA\\
+G(x,p)=V(x\leftrightarrow p)\frac{\cos\theta_1\cos\theta_2}{\lVert
+p-x\rVert^2}
+\]</span></p>
+<p>采样域转化到面上计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">function <span class="hljs-title">Ls</span><span class="hljs-params">(dir)</span>:</span><br><span class="hljs-function">    throughoutput =</span> <span class="hljs-number">1</span><br>    radiance = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">while</span>(before max depth)<br>        x = scene.<span class="hljs-built_in">Intersect</span>(dir)<br><br>        pdf_direct, bsdf_direct, emittance, geo_term = <span class="hljs-built_in">SampleLight</span>()<br>        direct_radiance = bsdf_direct * emittance * geo_term / pdf_direct<br>        radiance += direct_radiance * throughoutput<br><br>        dir, pdf, cos, bsdf = <span class="hljs-built_in">SmapleNextDirection</span>()<br>        throughoutput *= bsdf * cos / pdf<br><br>    <span class="hljs-keyword">return</span> radiance<br></code></pre></td></tr></table></figure>
+<p>注意一个细节，这里计算的是 <span class="math inline">\(L_s\)</span>
+而非 <span class="math inline">\(L_i\)</span>
+，如果从相机发出的光线所交的第一个表面就有光照 <span
+class="math inline">\(L_e\)</span>，要加到结果上。因为第一个表面的直接光照已经没法再提前计算了。</p>
+<h2 id="和多重重要性采样mis的关系">和多重重要性采样（MIS）的关系</h2>
+<p>可能会有人和我有过一样的疑问：这不就是 MIS
+中的对光源采样吗，何必专门去说？</p>
+<p>事实上，我所做的不过是将 <span class="math inline">\(L\)</span> 拆成
+<span class="math inline">\(L_s\)</span> 和 <span
+class="math inline">\(L_e\)</span> ，改写渲染方程的形式，得到 NEE
+的计算框架。至于采样无非是计算积分的方式，和 NEE
+本身并无关联，这是非常容易混淆的。</p>
+<p>在 NEE 下应用 MIS 的计算对象是积分 <span class="math display">\[
+\begin{aligned}
+E(\omega)=&amp;\int_{\Omega_e} L_e(\omega\to x)f_s(\omega\to x \to
+\omega_i)\cos\theta d \omega\\
+E(p)=&amp;\int_{\Omega_e}L_e(p\to x)f_s(p\to x \to \omega_i)G(x,p)dp
+\end{aligned}
+\]</span> 可以将积分域延拓到 <span class="math inline">\(\Omega\)</span>
+上（没有直接光照的地方 <span
+class="math inline">\(L_e=0\)</span>），再根据材质做重要性采样，并和光源重要性采样的结果加权平均。注意到根据光源采样和根据材质采样的采样域是不一样的，但并不影响结果的无偏性，有关
+MIS 性质的证明可以参考<a
+target="_blank" rel="noopener" href="https://agraphicsguynotes.com/posts/understanding_the_math_behind_restir_di/">这篇文章</a>，结果是
+<span class="math display">\[
+\hat{E}=W(\omega_s)\frac{E(\omega_s)}{pdf(\omega_s)}+W(p_s)\frac{E(p_s)}{pdf(p_s)}
+\]</span></p>
+<p>可以复用样本 <span class="math inline">\(\omega_s\)</span>
+采样间接光积分。权重函数此处不予赘述。</p>
+<p>为什么只对 NEE 中的直接光积分使用 MIS
+？因为直接光积分的计算不存在递归，如果直接对原始渲染方程中的积分使用 MIS
+<span class="math display">\[
+\int_\Omega L(\omega\to x)f_s(\omega\to x \to \omega_i)\cos\theta d
+\omega
+\]</span>
+当然也可以根据光源和材质采样出两条路径，但这两条路径都需要递归计算，会导致光线数以指数级别增长，是不可接受的。</p>
 
                 
               </div>
@@ -425,8 +386,8 @@ Shader Tutorials for the Unity Engine</a></p></li>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>图形学渲染方向学习路线整理</div>
-      <div>https://adven00.github.io/2021/12/14/图形学渲染方向学习路线整理/</div>
+      <div>Next Event Estimation</div>
+      <div>https://adven00.github.io/2023/11/27/Next-Event-Estimation/</div>
     </div>
     <div class="license-meta">
       
@@ -438,7 +399,7 @@ Shader Tutorials for the Unity Engine</a></p></li>
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2021年12月14日</div>
+          <div>2023年11月27日</div>
         </div>
       
       
@@ -470,15 +431,15 @@ Shader Tutorials for the Unity Engine</a></p></li>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/01/14/%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B%E7%9A%84%E7%BA%A7%E6%95%B0%E5%BD%A2%E5%BC%8F/" title="渲染方程的级数形式">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">渲染方程的级数形式</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2022/01/14/%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B%E7%9A%84%E7%BA%A7%E6%95%B0%E5%BD%A2%E5%BC%8F/" title="渲染方程的级数形式">
+                        <span class="hidden-mobile">渲染方程的级数形式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
@@ -532,6 +493,12 @@ Shader Tutorials for the Unity Engine</a></p></li>
 
 
   
+
+
+  
+  
+
+
 
 
 
@@ -749,6 +716,49 @@ Shader Tutorials for the Unity Engine</a></p></li>
 
 
   <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" ></script>
 
   <script  src="/js/local-search.js" ></script>
 
