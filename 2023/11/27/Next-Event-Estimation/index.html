@@ -1,0 +1,787 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/my_favicon.png">
+  <link rel="icon" href="/img/my_favicon.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Adven">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Next Event Estimation (NEE) 是一个常被提及的概念，却鲜有中文资料介绍。受这篇文章启发，我姑且将 NEE 定义为「提前计算直接光照」。这一概念常常和 MIS 等混淆，特此整理一下。 算法 首先还是列出渲染方程 \[ L(x\to\omega_i) &#x3D; L_e(x\to\omega_i) + \int_\Omega L(\omega\to x)f_s(\om">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Next Event Estimation">
+<meta property="og:url" content="https://adven00.github.io/2023/11/27/Next-Event-Estimation/index.html">
+<meta property="og:site_name" content="Adven&#39;s blog">
+<meta property="og:description" content="Next Event Estimation (NEE) 是一个常被提及的概念，却鲜有中文资料介绍。受这篇文章启发，我姑且将 NEE 定义为「提前计算直接光照」。这一概念常常和 MIS 等混淆，特此整理一下。 算法 首先还是列出渲染方程 \[ L(x\to\omega_i) &#x3D; L_e(x\to\omega_i) + \int_\Omega L(\omega\to x)f_s(\om">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-26T16:15:25.000Z">
+<meta property="article:modified_time" content="2023-11-28T07:57:17.867Z">
+<meta property="article:author" content="Adven">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Next Event Estimation - Adven&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"adven00.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":50,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Adven&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/my_banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Next Event Estimation"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-27 00:15" pubdate>
+          2023年11月27日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Next Event Estimation</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Next Event Estimation (NEE)
+是一个常被提及的概念，却鲜有中文资料介绍。受<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/666466161">这篇文章</a>启发，我姑且将
+NEE 定义为「提前计算直接光照」。这一概念常常和 MIS
+等混淆，特此整理一下。</p>
+<h2 id="算法">算法</h2>
+<p>首先还是列出渲染方程</p>
+<p><span class="math display">\[
+L(x\to\omega_i) = L_e(x\to\omega_i) + \int_\Omega L(\omega\to
+x)f_s(\omega\to x \to \omega_i)\cos\theta d \omega
+\]</span></p>
+<p>渲染方程带有递归性质，实质上是直接光照 <span
+class="math inline">\(L_e\)</span> 的累加</p>
+<p><span class="math display">\[
+L(x^0\to\omega^0)=\sum_i K_i L_e(x^i\to\omega^i)
+\]</span></p>
+<p>其中上标代表一条追踪路径 <span
+class="math inline">\(x^0\to\omega^0\to x^1\to
+\omega^1\to\cdots\)</span>
+，到这里其实就可以写出一个简单的路径追踪函数了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">function <span class="hljs-title">Li</span><span class="hljs-params">(dir)</span>:</span><br><span class="hljs-function">    throughoutput =</span> <span class="hljs-number">1</span><br>    radiance = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">while</span>(before max depth)<br>        x = scene.<span class="hljs-built_in">Intersect</span>(dir)<br><br>        <span class="hljs-keyword">if</span> (x is on a light)<br>            radiance += <span class="hljs-built_in">Le</span>(x, dir) * throughoutput<br><br>        dir, pdf, cos, bsdf = <span class="hljs-built_in">SmapleNextDirection</span>()<br>        throughoutput *= bsdf * cos / pdf <br><br>    <span class="hljs-keyword">return</span> radiance<br></code></pre></td></tr></table></figure>
+<p>这里采样下一条路径的方法是任意的，可以根据材质等等。思路很简洁，但存在一个问题：当且仅当采样的路径击中光源表面时，才会对该光线的结果产生贡献。在光源较少的场景里这并不是一件容易的事！当然只要光线足够多，迭代足够深，总会得到收敛的结果，但也会导致较大的方差。</p>
+<p>换句话说，造成该现象的原因是「计算光源贡献的时机太迟了」，非要到直接击中时才计算。事实上，我们可以将交点受到的光照拆成两部分：光源直接照射和其他表面的散射</p>
+<p><span class="math display">\[
+L(\omega\to x)=L_e(\omega\to x) + L_s(\omega\to x)
+\]</span></p>
+<p>把渲染方程改写成</p>
+<p><span class="math display">\[
+\begin{aligned}
+L_s(x\to\omega_i) =&amp;\int_\Omega L_s(\omega\to x)f_s(\omega\to x \to
+\omega_i)\cos\theta d \omega \qquad\text{(indirect light)}\\
++&amp;\int_{\Omega_e}L_e(\omega\to x)f_s(\omega\to x \to
+\omega_i)\cos\theta d \omega\qquad\text{ (direct light)}    
+\end{aligned}
+\]</span></p>
+<p>这样改写以后，和原来的渲染方程形式上几乎一致，区别在于 <span
+class="math inline">\(L_e\)</span> 项变成了一个关于 <span
+class="math inline">\(L_e\)</span>
+的积分。这样，每次击中表面时，都会计算「受到的直接光照的积分」，即使是小光源也总会产生贡献。从「表面发出的光」到「受到的直接光照积分」，将后续直接光的计算提前，这就是我对「Next
+Event」的理解。</p>
+<p>计算上式是很简单的，和前述原始渲染方程的计算方法完全相同，只不过把
+<span class="math inline">\(L_e\)</span>
+换成一个可计算的积分。第二项直接光积分更常见的形式是</p>
+<p><span class="math display">\[
+\begin{aligned}
+\int_{A}L_e(p\to x)f_s(p\to x \to \omega_i)G(x,p)dA\\
+G(x,p)=V(x\leftrightarrow p)\frac{\cos\theta_1\cos\theta_2}{\lVert
+p-x\rVert^2}
+\end{aligned}
+\]</span></p>
+<p>采样域转化到面上计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">function <span class="hljs-title">Ls</span><span class="hljs-params">(dir)</span>:</span><br><span class="hljs-function">    throughoutput =</span> <span class="hljs-number">1</span><br>    radiance = <span class="hljs-number">0</span><br><br>    <span class="hljs-keyword">while</span>(before max depth)<br>        x = scene.<span class="hljs-built_in">Intersect</span>(dir)<br><br>        pdf_direct, bsdf_direct, emittance, geo_term = <span class="hljs-built_in">SampleLight</span>()<br>        direct_radiance = bsdf_direct * emittance * geo_term / pdf_direct<br>        radiance += direct_radiance * throughoutput<br><br>        dir, pdf, cos, bsdf = <span class="hljs-built_in">SmapleNextDirection</span>()<br>        throughoutput *= bsdf * cos / pdf<br><br>    <span class="hljs-keyword">return</span> radiance<br></code></pre></td></tr></table></figure>
+<p>注意一个细节，这里计算的是 <span class="math inline">\(L_s\)</span>
+而非 <span class="math inline">\(L_i\)</span>
+，如果从相机发出的光线所交的第一个表面就有光照 <span
+class="math inline">\(L_e\)</span>，要加到结果上。因为第一个表面的直接光照已经没法再提前计算了。</p>
+<h2 id="和多重重要性采样mis的关系">和多重重要性采样（MIS）的关系</h2>
+<p>可能会有人和我有过一样的疑问：这不就是 MIS
+中的对光源采样吗，何必专门去说？</p>
+<p>事实上，我所做的不过是将 <span class="math inline">\(L\)</span> 拆成
+<span class="math inline">\(L_s\)</span> 和 <span
+class="math inline">\(L_e\)</span> ，改写渲染方程的形式，得到 NEE
+的计算框架。至于采样无非是计算积分的方式，和 NEE
+本身并无关联，这是非常容易混淆的。</p>
+<p>在 NEE 下应用 MIS 的计算对象是积分 <span class="math display">\[
+\begin{aligned}
+E(\omega)=&amp;\int_{\Omega_e} L_e(\omega\to x)f_s(\omega\to x \to
+\omega_i)\cos\theta d \omega\\
+E(p)=&amp;\int_{\Omega_e}L_e(p\to x)f_s(p\to x \to \omega_i)G(x,p)dp
+\end{aligned}
+\]</span> 可以将积分域延拓到 <span class="math inline">\(\Omega\)</span>
+上（没有直接光照的地方 <span
+class="math inline">\(L_e=0\)</span>），再根据材质做重要性采样，并和光源重要性采样的结果加权平均。注意到根据光源采样和根据材质采样的采样域是不一样的，但并不影响结果的无偏性，有关
+MIS 性质的证明可以参考<a
+target="_blank" rel="noopener" href="https://agraphicsguynotes.com/posts/understanding_the_math_behind_restir_di/">这篇文章</a>，结果是
+<span class="math display">\[
+\hat{E}=W(\omega_s)\frac{E(\omega_s)}{pdf(\omega_s)}+W(p_s)\frac{E(p_s)}{pdf(p_s)}
+\]</span></p>
+<p>可以复用样本 <span class="math inline">\(\omega_s\)</span>
+采样间接光积分。权重函数此处不予赘述。</p>
+<p>为什么只对 NEE 中的直接光积分使用 MIS
+？因为直接光积分的计算不存在递归，如果直接对原始渲染方程中的积分使用 MIS
+<span class="math display">\[
+\int_\Omega L(\omega\to x)f_s(\omega\to x \to \omega_i)\cos\theta d
+\omega
+\]</span>
+当然也可以根据光源和材质采样出两条路径，但这两条路径都需要递归计算，会导致光线数以指数级别增长，是不可接受的。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/" class="category-chain-item">计算机图形学</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Next Event Estimation</div>
+      <div>https://adven00.github.io/2023/11/27/Next-Event-Estimation/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Adven</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/01/14/%E6%B8%B2%E6%9F%93%E6%96%B9%E7%A8%8B%E7%9A%84%E7%BA%A7%E6%95%B0%E5%BD%A2%E5%BC%8F/" title="渲染方程的级数形式">
+                        <span class="hidden-mobile">渲染方程的级数形式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
